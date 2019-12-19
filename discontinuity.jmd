@@ -1,0 +1,84 @@
+
+```julia
+using Revise, PerlaTonettiWaugh, Plots, Roots
+```
+
+```julia
+params_base = parameter_defaults();
+settings = settings_defaults();
+Ω_0 = stationary_algebraic(merge(params_base, (d = params_base.d_0,)), settings).Ω
+```
+
+```julia
+using Parameters
+```
+
+```julia
+using DataFrames
+```
+
+```julia
+df = DataFrame()
+settings = settings_defaults();
+params_base = parameter_defaults()
+γ_grid = range(1.0, 2.0, length = 1000)
+d = params_base.d_0
+
+for γ in γ_grid 
+    params = merge(params_base, (γ = γ, ζ = 0.2076923076923077, d = d)) # zeta at discon point (gamma = 1.88)
+    sol_numerical = stationary_numerical(params, settings)
+    vals = PerlaTonettiWaugh.staticvals([sol_numerical.g, sol_numerical.z_bar, sol_numerical.Ω], params)
+    residuals = PerlaTonettiWaugh.stationary_algebraic_aux([sol_numerical.g, sol_numerical.z_bar, sol_numerical.Ω], params)
+    push!(df, merge(vals, (resid_1 = residuals[1], resid_2 = residuals[2], resid_3 = residuals[3], Ω = sol_numerical.Ω)))
+end
+```
+
+```julia
+p_r = plot(γ_grid, df.r, legend = false, title = "r", size = (800, 800))
+p_ν = plot(γ_grid, df.ν, legend = false, title = "nu", size = (800, 800))
+p_a = plot(γ_grid, df.a, legend = false, title = "a", size = (800, 800))
+p_b = plot(γ_grid, df.b, legend = false, title = "b", size = (800, 800))
+p_S = plot(γ_grid, df.S, legend = false, title = "S", size = (800, 800))
+p_z_bar = plot(γ_grid, df.z_bar, legend = false, title = "z_bar", size = (800, 800))
+p_w = plot(γ_grid, df.w, legend = false, title = "w", size = (800, 800))
+p_π_min = plot(γ_grid, df.π_min, legend = false, title = "pi_min", size = (800, 800))
+p_resid_1 = plot(γ_grid, df.resid_1, legend = false, title = "residual[1]", size = (800, 800))
+p_resid_2 = plot(γ_grid, df.resid_2, legend = false, title = "residual[2]", size = (800, 800))
+p_resid_3 = plot(γ_grid, df.resid_3, legend = false, title = "residual[3]", size = (800, 800))
+p_Ω = plot(γ_grid, df.Ω, legend = false, title = "Omega", size = (800, 800))
+
+plot(p_r, p_ν, p_a, p_b, p_S, p_z_bar, p_w, p_π_min, p_resid_1, p_resid_2, p_resid_3, p_Ω, layout = (4, 3))
+```
+
+```julia
+df = DataFrame()
+settings = settings_defaults();
+params_base = parameter_defaults()
+γ_grid = range(1.875, 1.885, length = 1000)
+
+for γ in γ_grid 
+    params = merge(params_base, (γ = γ, ζ = 0.2076923076923077, d = d)) # zeta at discon
+    sol = PerlaTonettiWaugh.stationary_algebraic(params, settings)
+    vals = PerlaTonettiWaugh.staticvals([sol.g, sol.z_hat, sol.Ω], params)
+    residuals = PerlaTonettiWaugh.stationary_algebraic_aux([sol.g, sol.z_hat, sol.Ω], params)
+    push!(df, merge(vals, (resid_1 = residuals[1], resid_2 = residuals[2], resid_3 = residuals[3], Ω = sol.Ω)))
+end
+```
+
+```julia
+p_r = plot(γ_grid, df.r, legend = false, title = "r", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_ν = plot(γ_grid, df.ν, legend = false, title = "nu", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_a = plot(γ_grid, df.a, legend = false, title = "a", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_b = plot(γ_grid, df.b, legend = false, title = "b", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_S = plot(γ_grid, df.S, legend = false, title = "S", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_z_bar = plot(γ_grid, df.z_bar, legend = false, title = "z_bar", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_w = plot(γ_grid, df.w, legend = false, title = "w", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_π_min = plot(γ_grid, df.π_min, legend = false, title = "pi_min", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_resid_1 = plot(γ_grid, df.resid_1, legend = false, title = "residual[1]", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_resid_2 = plot(γ_grid, df.resid_2, legend = false, title = "residual[2]", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_resid_3 = plot(γ_grid, df.resid_3, legend = false, title = "residual[3]", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+p_Ω = plot(γ_grid, df.Ω, legend = false, title = "Omega", size = (800, 800), xticks = [1.8, 1.9,  2.0])
+
+
+plot(p_r, p_ν, p_a, p_b, p_S, p_z_bar, p_w, p_π_min, p_resid_1, p_resid_2, p_resid_3, p_Ω, layout = (4, 3))
+```
