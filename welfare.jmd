@@ -76,7 +76,7 @@ growth_old = df.g_competitive;
 ## $\gamma$ = 2
 
 ```julia
-params_base = parameter_defaults(γ = 2, χ = 0.1905, ζ = 1.045)
+params_base = parameter_defaults(γ = 2, χ = 0.1895)
 d_0 = params_base.d_0
 d_T = params_base.d_T
 settings = settings_defaults();
@@ -134,14 +134,11 @@ plot(p_g_ratio, p_g_levels,size = (800, 400))
 
 ```julia
 p_consumption_equivalent = plot(df.d, df.consumption_equivalent, xlabel = "d", title = "Consumption Equivalent", legend = false)
-p_welfare_ratio = plot(df.d, df.U_bar_rat, xlabel = "d", ylabel = "U_bar ratio", title = "Welfare ratio (planner/equilibrium)", legend = false);
+p_welfare_ratio = plot(xlabel = "d", ylabel = "U_bar ratio", title = "Welfare Levels", legend = :right)
+plot!(p_welfare_ratio, df.U_bar_competitive, label = "Competitive")
+plot!(p_welfare_ratio, df.U_bar_planner, label = "Planner");
 ```
 
 ```julia
 plot(p_consumption_equivalent, p_welfare_ratio, size = (800, 400))
-```
-
-```julia
-plot(df.d, growth_old, title = "Competitive Growth Rates", label = "Baseline Parameters");
-plot!(df.d, df.g_competitive, label = "Tweaked Parameters", legend = :bottomleft)
 ```
