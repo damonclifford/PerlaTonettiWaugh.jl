@@ -69,11 +69,7 @@ p_welfare_ratio = plot(df.d, df.U_bar_rat, xlabel = "d", ylabel = "U_bar ratio",
 plot(p_consumption_equivalent, p_welfare_ratio, size = (800, 400))
 ```
 
-```julia
-growth_old = df.g_competitive;
-```
-
-## $\gamma$ = 2
+## $\gamma$ = 2 Experiments
 
 ```julia
 params_base = parameter_defaults(γ = 2, χ = 0.1895)
