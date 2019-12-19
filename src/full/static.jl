@@ -34,9 +34,9 @@ entry_residual(v_1, Ξ₁, parameters) = Ξ₁*v_1 - parameters.ζ*(1-parameters
 π_min(L_tilde, z_bar, parameters) = (1 - L_tilde) / ((parameters.σ-1)*z_bar^(parameters.σ-1)) # (38)
 
 function π_rat(z_hat, π_min, parameters)
-    @unpack θ, σ, d, κ, N = parameters 
+    @unpack θ, σ, d, κ, N = parameters
     return θ*(1-z_hat^(-θ+σ-1))/(θ-σ+1) + (1+(N-1)*d^(1-σ))*θ*z_hat^(-θ+σ-1)/(θ-σ+1)+(N-1)*κ*z_hat^(-θ)/π_min # (61)
-end 
+end
 
 function z_bar(z_hat, Ω, parameters)
     @unpack θ, σ, N, d = parameters
@@ -60,4 +60,4 @@ function static_equilibrium(Ξ₁, v_1, g, z_hat, E, Ω, z, parameters)
             w = w_t)
 end
 
-consumption_equivalent(U, U_old, parameters) = exp(parameters.ρ*(U - U_old)) # (C.89) from computational appendix
+consumption_equivalent(U, U_old, parameters) = isapprox(parameters.γ, 1.0) ?  exp(parameters.ρ*(U - U_old)) : (U/U_old)^(1.0/(1.0 - parameters.γ))
