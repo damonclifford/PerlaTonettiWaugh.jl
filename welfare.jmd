@@ -134,7 +134,7 @@ plot(p_g_ratio, p_g_levels,size = (800, 400))
 
 ```julia
 p_consumption_equivalent = plot(df.d, df.consumption_equivalent, xlabel = "d", title = "Consumption Equivalent", legend = false)
-p_welfare_ratio = plot(xlabel = "d", ylabel = "U_bar ratio", title = "Welfare Levels", legend = :right)
+p_welfare_ratio = plot(xlabel = "d", ylabel = "U_bar", title = "Welfare Levels", legend = :right)
 plot!(p_welfare_ratio, df.U_bar_competitive, label = "Competitive")
 plot!(p_welfare_ratio, df.U_bar_planner, label = "Planner");
 ```
