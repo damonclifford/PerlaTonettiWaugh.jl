@@ -31,16 +31,18 @@ welfare_objective(vals; params) = -PerlaTonettiWaugh.welfare(vals, params).U_bar
 
 planner_baseline = optimize(x -> welfare_objective([x, CE_baseline.z_hat, CE_baseline.Ω], params = params_baseline), CE_baseline.g, 0.16)
 planner_baseline.converged || error("Solver didn't converge")
+planner_baseline.minimizer > 0. && planner_baseline.minimizer < 0.16 || error("Hit edge.")
 
 planner_lower = optimize(x -> welfare_objective([x, CE_lower.z_hat, CE_lower.Ω], params = params_lower), CE_lower.g, 0.16)
 planner_lower.converged || error("Solver didn't converge")
+planner_lower.minimizer > 0. && planner_lower.minimizer < 0.16 || error("Hit edge.")
 ```
 
 ```julia
 U_bar_baseline = -minimum(planner_baseline)
 U_bar_lower = -minimum(planner_lower)
 
-PerlaTonettiWaugh.consumption_equivalent(U_bar_baseline, U_bar_lower, params)
+PerlaTonettiWaugh.consumption_equivalent(U_bar_lower, U_bar_baseline, params) # baseline is "U_old"
 ```
 
 #### Experiment 2: Consumption Equivalent Between Planner and CE with Baseline Trade Costs
@@ -61,9 +63,10 @@ U_bar_CE = CE_baseline.U_bar
 welfare_objective(vals; params) = -PerlaTonettiWaugh.welfare(vals, params).U_bar
 planner_baseline = optimize(x -> welfare_objective([x, CE_baseline.z_hat, CE_baseline.Ω], params = params_baseline), CE_baseline.g, 0.16)
 planner_baseline.converged || error("Solver didn't converge")
+planner_baseline.minimizer > 0. && planner_baseline.minimizer < 0.16 || error("Hit edge.")
 U_bar_planner = -minimum(planner_baseline)
 
-PerlaTonettiWaugh.consumption_equivalent(U_bar_planner, U_bar_CE, params)
+PerlaTonettiWaugh.consumption_equivalent(U_bar_planner, U_bar_CE, params) # CE is "U_old"
 ```
 
 #### Experiment 3: Consumption Equivalent Between Planner and CE with Lower Trade Costs
@@ -84,9 +87,10 @@ U_bar_CE = CE_lower.U_bar
 welfare_objective(vals; params) = -PerlaTonettiWaugh.welfare(vals, params).U_bar
 planner_lower = optimize(x -> welfare_objective([x, CE_lower.z_hat, CE_lower.Ω], params = params_lower), CE_lower.g, 0.16)
 planner_lower.converged || error("Solver didn't converge")
+planner_lower.minimizer > 0. && planner_lower.minimizer < 0.16 || error("Hit edge.")
 U_bar_planner = -minimum(planner_lower)
 
-PerlaTonettiWaugh.consumption_equivalent(U_bar_planner, U_bar_CE, params)
+PerlaTonettiWaugh.consumption_equivalent(U_bar_planner, U_bar_CE, params) # CE is "U_old"
 ```
 
 #### Experiment 4: Consumption Equivalent Between CEs with Varying Trade Costs
