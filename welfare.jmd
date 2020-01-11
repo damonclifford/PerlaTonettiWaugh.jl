@@ -3,6 +3,123 @@
 using PerlaTonettiWaugh, Parameters, Plots, DataFrames, Optim
 ```
 
+## New Calculations
+
+#### Experiment 1: Consumption Equivalent Between Planners with Varying Trade Costs
+
+```julia
+d_0 = 3.0426
+d_baseline = d_0 
+d_T =  2.83834
+d_lower = d_T
+```
+
+```julia
+# solve the CE for each d to obtain the [Omega, z_hat]
+params = parameter_defaults(γ = 1)
+settings = settings_defaults();
+
+params_baseline = merge(params, (d = d_baseline,))
+CE_baseline = stationary_numerical(params_baseline, settings)
+
+params_lower = merge(params, (d = d_lower,))
+CE_lower = stationary_numerical(params_lower, settings);
+
+# solve the (univariate) planner's problem in each case, using [Omega, z_hat] from the appropriate CE
+# use the CE g as the initial condition
+welfare_objective(vals; params) = -PerlaTonettiWaugh.welfare(vals, params).U_bar
+
+planner_baseline = optimize(x -> welfare_objective([x, CE_baseline.z_hat, CE_baseline.Ω], params = params_baseline), CE_baseline.g, 0.16)
+planner_baseline.converged || error("Solver didn't converge")
+planner_baseline.minimizer > 0. && planner_baseline.minimizer < 0.16 || error("Hit edge.")
+
+planner_lower = optimize(x -> welfare_objective([x, CE_lower.z_hat, CE_lower.Ω], params = params_lower), CE_lower.g, 0.16)
+planner_lower.converged || error("Solver didn't converge")
+planner_lower.minimizer > 0. && planner_lower.minimizer < 0.16 || error("Hit edge.")
+```
+
+```julia
+U_bar_baseline = -minimum(planner_baseline)
+U_bar_lower = -minimum(planner_lower)
+
+PerlaTonettiWaugh.consumption_equivalent(U_bar_lower, U_bar_baseline, params) # baseline is "U_old"
+```
+
+#### Experiment 2: Consumption Equivalent Between Planner and CE with Baseline Trade Costs
+
+```julia
+d_0 = 3.0426
+d_baseline = d_0
+```
+
+```julia
+params = parameter_defaults(γ = 1)
+settings = settings_defaults();
+
+params_baseline = merge(params, (d = d_baseline,))
+CE_baseline = stationary_numerical(params_baseline, settings)
+U_bar_CE = CE_baseline.U_bar 
+
+welfare_objective(vals; params) = -PerlaTonettiWaugh.welfare(vals, params).U_bar
+planner_baseline = optimize(x -> welfare_objective([x, CE_baseline.z_hat, CE_baseline.Ω], params = params_baseline), CE_baseline.g, 0.16)
+planner_baseline.converged || error("Solver didn't converge")
+planner_baseline.minimizer > 0. && planner_baseline.minimizer < 0.16 || error("Hit edge.")
+U_bar_planner = -minimum(planner_baseline)
+
+PerlaTonettiWaugh.consumption_equivalent(U_bar_planner, U_bar_CE, params) # CE is "U_old"
+```
+
+#### Experiment 3: Consumption Equivalent Between Planner and CE with Lower Trade Costs
+
+```julia
+d_T =  2.83834
+d_lower = d_T
+```
+
+```julia
+params = parameter_defaults(γ = 1)
+settings = settings_defaults();
+
+params_lower = merge(params, (d = d_lower,))
+CE_lower = stationary_numerical(params_lower, settings)
+U_bar_CE = CE_lower.U_bar 
+
+welfare_objective(vals; params) = -PerlaTonettiWaugh.welfare(vals, params).U_bar
+planner_lower = optimize(x -> welfare_objective([x, CE_lower.z_hat, CE_lower.Ω], params = params_lower), CE_lower.g, 0.16)
+planner_lower.converged || error("Solver didn't converge")
+planner_lower.minimizer > 0. && planner_lower.minimizer < 0.16 || error("Hit edge.")
+U_bar_planner = -minimum(planner_lower)
+
+PerlaTonettiWaugh.consumption_equivalent(U_bar_planner, U_bar_CE, params) # CE is "U_old"
+```
+
+#### Experiment 4: Consumption Equivalent Between CEs with Varying Trade Costs
+
+```julia
+d_0 = 3.0426
+d_baseline = d_0 
+d_T =  2.83834
+d_lower = d_T
+```
+
+```julia
+# solve the CE for each d to obtain the [Omega, z_hat]
+params = parameter_defaults(γ = 1)
+settings = settings_defaults();
+
+params_baseline = merge(params, (d = d_baseline,))
+CE_baseline = stationary_numerical(params_baseline, settings)
+
+params_lower = merge(params, (d = d_lower,))
+CE_lower = stationary_numerical(params_lower, settings);
+```
+
+```julia
+PerlaTonettiWaugh.consumption_equivalent(CE_lower.U_bar, CE_baseline.U_bar, params) # baseline is "U_old"
+```
+
+## Old Calculations
+
 ```julia
 params_base = parameter_defaults()
 d_0 = params_base.d_0
