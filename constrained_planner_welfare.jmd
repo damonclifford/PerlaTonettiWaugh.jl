@@ -1,0 +1,76 @@
+
+```julia
+using PerlaTonettiWaugh, Parameters, Plots, DataFrames, Optim, LaTeXStrings
+```
+
+```julia
+params_minimal = parameter_defaults(γ = 1)
+settings = settings_defaults();
+```
+
+```julia
+function constrained_equilibrium(ζ_p, params)
+    params_constrained = merge(params, (ζ_p = ζ_p,))
+    CE_constrained = stationary_numerical(params_constrained, settings) # competitive equilibrium
+end
+```
+
+### Experiment 1: (Constrained) Planner's Welfare for Baseline Parameters 
+
+```julia
+d_0 = 3.0426
+d_baseline = d_0
+params_baseline = merge(params_minimal, (d = d_baseline,));
+
+ζ_range_baseline = params.ζ-0.5:0.01:params.ζ+1.185
+equilibria_baseline = [constrained_equilibrium(x, params_baseline) for x in ζ_range_baseline]
+
+welfares_baseline = [sol.U_bar for sol in equilibria_baseline]
+cs_baseline = [sol.c for sol in equilibria_baseline]
+gs_baseline = [sol.g for sol in equilibria_baseline];
+```
+
+```julia
+plot(ζ_range, welfares, title = "Baseline Welfares for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"\bar{U}", legend = false)
+vline!([1.0])
+```
+
+```julia
+plot(ζ_range, cs_baseline, title = "Baseline cs for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"c", legend = false)
+vline!([1.0])
+```
+
+```julia
+plot(ζ_range, gs_baseline, title = "Baseline gs for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"g", legend = false)
+vline!([1.0])
+```
+
+### Experiment 2: (Constrained) Planner's Welfare for Lower Trade Costs
+
+```julia
+d_T =  2.83834
+d_lower = d_T
+params_lower = merge(params_minimal, (d = d_lower,));
+
+ζ_range_lower = params.ζ-0.5:0.01:params.ζ+0.85
+equilibria_lower = [constrained_equilibrium(x, params_lower) for x in ζ_range_lower]
+
+welfares_lower = [sol.U_bar for sol in equilibria_lower]
+cs_lower = [sol.c for sol in equilibria_lower]
+gs_lower = [sol.g for sol in equilibria_lower];
+```
+
+```julia
+plot(ζ_range_lower, welfares_lower, title = "Welfares for Constrained Planner, Lower Trade Costs", xlabel = L"\zeta_p", ylabel = L"\bar{U}", legend = false)
+vline!([1.0])
+```
+
+```julia
+plot(ζ_range_lower, cs_lower, title = "cs for Constrained Planner, Lower Trade Costs", xlabel = L"\zeta_p", ylabel = L"c", legend = false)
+vline!([1.0])
+```
+
+```julia
+plot(ζ_range_lower, gs_lower, title = "gs for Constrained Planner, Lower Trade Costs", xlabel = L"\zeta_p", ylabel = L"g", legend = false)
+vline!([1.0])
+```
