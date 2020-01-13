@@ -10,7 +10,8 @@ settings = settings_defaults();
 
 ```julia
 function constrained_equilibrium(ζ_p, params)
-    params_constrained = merge(params, (ζ_p = ζ_p,))
+    χ_p = params_minimal.ζ/ζ_p
+    params_constrained = merge(params, (ζ_p = ζ_p, χ_p = χ_p))
     CE_constrained = stationary_numerical(params_constrained, settings) # competitive equilibrium
 end
 ```
@@ -22,7 +23,7 @@ d_0 = 3.0426
 d_baseline = d_0
 params_baseline = merge(params_minimal, (d = d_baseline,));
 
-ζ_range_baseline = params.ζ-0.5:0.01:params.ζ+1.185
+ζ_range_baseline = params_baseline.ζ:0.005:params_baseline.ζ+0.005
 equilibria_baseline = [constrained_equilibrium(x, params_baseline) for x in ζ_range_baseline]
 
 welfares_baseline = [sol.U_bar for sol in equilibria_baseline]
@@ -31,17 +32,17 @@ gs_baseline = [sol.g for sol in equilibria_baseline];
 ```
 
 ```julia
-plot(ζ_range, welfares, title = "Baseline Welfares for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"\bar{U}", legend = false)
+plot(ζ_range_baseline, welfares_baseline, title = "Baseline Welfares for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"\bar{U}", legend = false)
 vline!([1.0])
 ```
 
 ```julia
-plot(ζ_range, cs_baseline, title = "Baseline cs for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"c", legend = false)
+plot(ζ_range_baseline, cs_baseline, title = "Baseline cs for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"c", legend = false)
 vline!([1.0])
 ```
 
 ```julia
-plot(ζ_range, gs_baseline, title = "Baseline gs for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"g", legend = false)
+plot(ζ_range_baseline, gs_baseline, title = "Baseline gs for Constrained Planner", xlabel = L"\zeta_p", ylabel = L"g", legend = false)
 vline!([1.0])
 ```
 
@@ -52,7 +53,7 @@ d_T =  2.83834
 d_lower = d_T
 params_lower = merge(params_minimal, (d = d_lower,));
 
-ζ_range_lower = params.ζ-0.5:0.01:params.ζ+0.85
+ζ_range_lower = params_lower.ζ-0.5:0.01:params_lower.ζ+0.85
 equilibria_lower = [constrained_equilibrium(x, params_lower) for x in ζ_range_lower]
 
 welfares_lower = [sol.U_bar for sol in equilibria_lower]
