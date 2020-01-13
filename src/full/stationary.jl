@@ -66,7 +66,7 @@ function staticvals(vals, parameters)
     L_tilde_a_T = L_tilde_a(Ω, S_T, parameters)
     z_bar_T = z_bar(z_hat, Ω, parameters)
     w_T = w(z_bar_T, parameters)
-    x_T = x(w_T, ζ, parameters)
+    x_T = x(w_T, ζ, parameters) # uses undistorted ζ
     π_min_T = (d^(σ-1) * κ)/(z_hat^(σ-1)) # (C.12, inverted to express π_min as a function of parameters and z_hat)
     π_rat_T = (θ + (N-1)*(σ-1)*d^(-θ)*((κ/ζ) * χ/(ρ*(1-χ)))^(1 - θ/(σ - 1)))/(1 + θ - σ) # (C.17)
 
