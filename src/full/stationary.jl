@@ -1,11 +1,11 @@
 function stationary_algebraic(parameters, settings)
     x0 = settings.stationary_x0(parameters, settings)
     @assert parameters.υ > 0 && parameters.κ > 0
-    sol = nlsolve(x -> stationary_algebraic_aux(x, parameters), x0, inplace = false)
+    sol = nlsolve(x -> stationary_algebraic_aux(x, parameters), x0, inplace = false) # uses distorted parameters
     converged(sol) || error("Solver didn't converge.")
     g, z_hat, Ω = sol.zero
     @assert z_hat > 1 && Ω > 0 && g > 0
-    staticvalues = staticvals([g, z_hat, Ω], parameters)
+    staticvalues = staticvals([g, z_hat, Ω], parameters) # uses undistorted parameters (only for return)
 
     # calculate value function using differential objects based on the grid
     @unpack z_ex = settings
