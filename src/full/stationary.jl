@@ -25,7 +25,7 @@ end
 function welfare(vals, parameters)
     g, z_hat, Ω = vals
     @unpack ρ, σ, N, θ, γ, d, κ, ζ, η, Theta, χ, υ, μ, δ = parameters
-    @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, x, π_min = staticvals(vals, parameters)
+    @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, π_min = staticvals(vals, parameters)
     c_T = c(L_tilde, Ω, z_bar)
     return (y = c_T, # y = c by (C.78)
             c = c_T,
