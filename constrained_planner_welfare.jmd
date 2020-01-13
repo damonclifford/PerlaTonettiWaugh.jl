@@ -10,9 +10,8 @@ settings = settings_defaults();
 
 ```julia
 function constrained_equilibrium(ζ_p, params)
-    χ_p = params_minimal.ζ/ζ_p
-    params_constrained = merge(params, (ζ_p = ζ_p, χ_p = χ_p))
-    CE_constrained = stationary_numerical(params_constrained, settings) # competitive equilibrium
+    params_constrained = merge(params, (ζ_p = ζ_p, ζ = 1.0))
+    CE_constrained = stationary_algebraic(params_constrained, settings) # competitive equilibrium
 end
 ```
 
@@ -23,7 +22,7 @@ d_0 = 3.0426
 d_baseline = d_0
 params_baseline = merge(params_minimal, (d = d_baseline,));
 
-ζ_range_baseline = params_baseline.ζ:0.005:params_baseline.ζ+0.005
+ζ_range_baseline = params_baseline.ζ-0.1:0.005:params_baseline.ζ+1.0
 equilibria_baseline = [constrained_equilibrium(x, params_baseline) for x in ζ_range_baseline]
 
 welfares_baseline = [sol.U_bar for sol in equilibria_baseline]
@@ -53,7 +52,7 @@ d_T =  2.83834
 d_lower = d_T
 params_lower = merge(params_minimal, (d = d_lower,));
 
-ζ_range_lower = params_lower.ζ-0.5:0.01:params_lower.ζ+0.85
+ζ_range_lower = params_lower.ζ-0.1:0.01:params_lower.ζ+0.45
 equilibria_lower = [constrained_equilibrium(x, params_lower) for x in ζ_range_lower]
 
 welfares_lower = [sol.U_bar for sol in equilibria_lower]
