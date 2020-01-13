@@ -9,7 +9,7 @@
     d_T = 2.3701
     Δ_E = 1e-06
   # Overall parameters.
-    params = (ρ = 0.02, σ = 4.2508, N = 10, θ = 5.1269, γ = 1.00, κ = 0.013, ζ = 1, η = 0, Theta = 1, χ = 1/(2.1868), υ = 0.0593, μ = 0, δ = 0.053)
+    params = (ρ = 0.02, σ = 4.2508, N = 10, θ = 5.1269, γ = 1.00, κ = 0.013, ζ = 1, η = 0, Theta = 1, χ = 1/(2.1868), υ = 0.0593, μ = 0, δ = 0.053, ζ_p = 1, χ_p = 1/(2.1868))
   # Solver settings.
 
 # Construct intermediate objects.
@@ -37,7 +37,7 @@
   # Run the solver.
     sol = solve_dynamics(params_T, stationary_T, settings, Ω)
     sol = merge(sol, (results = prepare_results(sol, stationary_T, stationary_0),))
-    filter!(row -> row.t >= 0, sol.results) # get rid of pre-shock values 
+    filter!(row -> row.t >= 0, sol.results) # get rid of pre-shock values
 
     # Spot-checks.
     @test sol.sol.t[5] ≈ 19.996000000000002 atol = 1e-5

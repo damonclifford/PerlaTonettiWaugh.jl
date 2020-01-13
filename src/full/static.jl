@@ -30,7 +30,7 @@ function λ_ii(z_hat, parameters)
 end
 
 c(L_tilde, Ω, z_bar) = (1 - L_tilde)*z_bar # (C.15) and (58)
-entry_residual(v_1, Ξ₁, parameters) = Ξ₁*v_1 - parameters.ζ*(1-parameters.χ)/parameters.χ # (56)
+entry_residual(v_1, Ξ₁, ζ_p, χ_p, parameters) = Ξ₁*v_1 - ζ_p*(1-χ_p)/χ_p # (56)
 π_min(L_tilde, z_bar, parameters) = (1 - L_tilde) / ((parameters.σ-1)*z_bar^(parameters.σ-1)) # (38)
 
 function π_rat(z_hat, π_min, parameters)
