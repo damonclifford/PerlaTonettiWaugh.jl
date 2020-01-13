@@ -9,7 +9,7 @@ function store_static_callback(u, t, integrator, p)
     Ω_t = Ω(t)
     S_t = S(g_t, parameters)
     L_tilde_t = L_tilde(g_t, z_hat_t, Ω_t, E_t, S_t, parameters)
-    entry_residual_t = entry_residual(v_1_t, Ξ₁, parameters)
+    entry_residual_t = entry_residual(v_1_t, Ξ₁, parameters.ζ, parameters.χ, parameters)
     push!(results, (t = t, g = g_t, z_hat = z_hat_t, Ω = Ω_t, E = E_t, v_1 = v_1_t, L_tilde = L_tilde_t, entry_residual = entry_residual_t))
 end
 
@@ -43,7 +43,7 @@ function f!(residual,du,u,p,t)
     residual[1:P] .-= du[1:P] # (53) subtracting the v'(t) to form the residual
     residual[P+1] = Ξ₁*v_1 + ζ - dot(ω, u[1:P])  # (54)
     residual[P+2] = z_hat^(σ-1) - κ * d^(σ-1) / π_min  # (55)
-    residual[P+3] = entry_residual(v_1, Ξ₁, parameters)  # (56)
+    residual[P+3] = entry_residual(v_1, Ξ₁, parameters.ζ, parameters.χ, parameters)  # (56)
 end
 
 # Calculate the transition dynamics given a fixed Ω(t) function
@@ -64,7 +64,7 @@ function solve_dynamics(parameters, stationary_sol_T, settings, Ω)
     L_tilde_T = stationary_sol_T.L_tilde
     Ω_T = stationary_sol_T.Ω
     Ξ₁ = 1/(1 - (σ-1)*(z[1] - z_ex[1]))  # (24), with ξ = (σ-1)
-    entry_residual_T = entry_residual(v_T[1], Ξ₁, parameters)
+    entry_residual_T = entry_residual(v_T[1], Ξ₁, ζ, χ, parameters)
 
     # Define the results data frame we'll be using and push the stationary onto it.
     results = DataFrame(t = T, g = g_T, z_hat = z_hat_T, Ω = Ω_T, E = δ, v_1 = v_T[1], L_tilde = L_tilde_T, entry_residual = entry_residual_T)
