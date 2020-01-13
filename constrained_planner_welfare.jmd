@@ -11,6 +11,10 @@ settings = settings_defaults();
 ```julia
 function constrained_equilibrium(ζ_p, params)
     params_constrained = merge(params, (ζ_p = ζ_p, ζ = 1.0))
+
+#     χ_p = params_minimal.ζ/ζ_p * params_minimal.χ # use global defaults 
+#     params_constrained = merge(params_constrained, (χ_p = χ_p,))
+
     CE_constrained = stationary_algebraic(params_constrained, settings) # competitive equilibrium
 end
 ```
