@@ -19,8 +19,8 @@ end
 
 w(z_bar, parameters) = (parameters.σ - 1)/(parameters.σ) * z_bar # (C.13)
 
-function x(w, parameters)
-    @unpack ζ, Theta, η = parameters
+function x(w, ζ, parameters) # ζ is either ζ_p or ζ
+    @unpack Theta, η = parameters
     return ζ * (1 - η + η * Theta / w) # (C.14)
 end
 
