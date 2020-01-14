@@ -5,7 +5,7 @@ function stationary_algebraic(parameters, settings)
     converged(sol) || error("Solver didn't converge.")
     g, z_hat, Ω = sol.zero
     @assert z_hat > 1 && Ω > 0 && g > 0
-    staticvalues = staticvals([g, z_hat, Ω], parameters) # uses undistorted parameters (only for return)
+    staticvalues = staticvals([g, z_hat, Ω], parameters) # uses undistorted parameters (except x)
 
     # calculate value function using differential objects based on the grid
     @unpack z_ex = settings
@@ -36,16 +36,14 @@ end
 # Kernel for the algebraic stationary.
 function stationary_algebraic_aux(vals, parameters)
     @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, υ, μ, δ, ζ_p, χ_p = parameters
-    @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, π_min = staticvals(vals, parameters)
+    @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, x, π_min = staticvals(vals, parameters)
     g, z_hat, Ω = vals
-
-    x_p = x(w, ζ_p, parameters)
 
     big_denom = ν*(θ + ν)*(θ - σ + 1) # (C.19)
     denom_1 = a*(g - r) # (C.19)
     num_1 = ν*(N-1)*(θ - σ + 1)*(d^(1 - σ)*(θ + ν)*z_hat^(-θ + σ - 1)-b*θ*z_hat^(-θ-ν)) # (C.19)
     num_2 = θ*(ν*(N-1)*d^(1-σ)*(θ+ν)*z_hat^(-θ + σ -1) + (ν + σ - 1)*(θ + ν - σ + 1)) # (C.19)
-    return [x_p/π_min - a*(χ_p/(1-χ_p))*(σ + ν - 1)/ν, # (C.18)
+    return [x/π_min - a*(χ_p/(1-χ_p))*(σ + ν - 1)/ν, # (C.18)
             1 + (σ-1)/ν - (num_1/denom_1 + num_2)/big_denom + (χ_p/(1-χ_p))*(σ + ν - 1)/(ν), # (C.19)
             π_min - (1- L_tilde)/((σ -1)*z_bar^(σ-1))] # (C.20)
 end
@@ -66,7 +64,7 @@ function staticvals(vals, parameters)
     L_tilde_a_T = L_tilde_a(Ω, S_T, parameters)
     z_bar_T = z_bar(z_hat, Ω, parameters)
     w_T = w(z_bar_T, parameters)
-    x_T = x(w_T, ζ, parameters) # uses undistorted ζ
+    x_T = x(w_T, parameters) # uses undistorted ζ
     π_min_T = (d^(σ-1) * κ)/(z_hat^(σ-1)) # (C.12, inverted to express π_min as a function of parameters and z_hat)
     π_rat_T = (θ + (N-1)*(σ-1)*d^(-θ)*((κ/ζ) * χ/(ρ*(1-χ)))^(1 - θ/(σ - 1)))/(1 + θ - σ) # (C.17) (not used in stationary solutions)
 
