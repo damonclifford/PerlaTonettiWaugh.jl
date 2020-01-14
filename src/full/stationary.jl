@@ -36,10 +36,8 @@ end
 # Kernel for the algebraic stationary.
 function stationary_algebraic_aux(vals, parameters)
     @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, υ, μ, δ, ζ_p, χ_p = parameters
-    @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, π_min = staticvals(vals, parameters)
+    @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, x, π_min = staticvals(vals, parameters)
     g, z_hat, Ω = vals
-
-    x_p = x(w, ζ_p, parameters)
 
     big_denom = ν*(θ + ν)*(θ - σ + 1) # (C.19)
     denom_1 = a*(g - r) # (C.19)
@@ -66,7 +64,7 @@ function staticvals(vals, parameters)
     L_tilde_a_T = L_tilde_a(Ω, S_T, parameters)
     z_bar_T = z_bar(z_hat, Ω, parameters)
     w_T = w(z_bar_T, parameters)
-    x_T = x(w_T, ζ, parameters) # uses undistorted ζ
+    x_T = x(w_T, parameters) # uses undistorted ζ
     π_min_T = (d^(σ-1) * κ)/(z_hat^(σ-1)) # (C.12, inverted to express π_min as a function of parameters and z_hat)
     π_rat_T = (θ + (N-1)*(σ-1)*d^(-θ)*((κ/ζ) * χ/(ρ*(1-χ)))^(1 - θ/(σ - 1)))/(1 + θ - σ) # (C.17) (not used in stationary solutions)
 
