@@ -48,12 +48,14 @@ end
 
 # Calculate the transition dynamics given a fixed Ω(t) function
 function solve_dynamics(parameters, stationary_sol_T, settings, Ω)
-    @unpack ρ, σ, N, θ, γ, d, κ, ζ, η, Theta, χ, υ, μ, δ = parameters
+    @unpack ρ, σ, N, θ, γ, d, κ, ζ, η, Theta, χ, υ, μ, δ, ζ_p, χ_p = parameters
     @unpack z_ex, T, tstops = settings
     z = z_ex[2:end-1]
     P = length(z)
     @assert γ ≈ 1 # These are the only supported parameters for the transition dynamics at this point
     @assert η == 0
+    @assert χ == χ_p "Chi_p must equal chi for the dynamic problem"
+    @assert ζ == ζ_p "Zeta_p must equal zeta for the dynamic problem"
 
     # unpack the stationary solution
     v_T = stationary_sol_T.v_tilde
@@ -124,11 +126,11 @@ function solve_transition(parameters, settings)
     @assert tstops[1] ≈ 0.0
     @assert tstops[end] ≈ T
 
-    fp_sol = fixedpoint(E_nodes_interior -> dynamics_fixedpoint(E_nodes_interior, params_T, stationary_sol_0, stationary_sol_T, settings), 
+    fp_sol = fixedpoint(E_nodes_interior -> dynamics_fixedpoint(E_nodes_interior, params_T, stationary_sol_0, stationary_sol_T, settings),
                         x0,
                         iterations = fixedpoint_iterations,
                         ftol = fixedpoint_ftol,
-                        m = fixedpoint_m, 
+                        m = fixedpoint_m,
                         beta = fixedpoint_beta,
                         show_trace = fixedpoint_show_trace)
     converged(fp_sol) || @warn "fixed point didn't converge."
@@ -138,8 +140,8 @@ function solve_transition(parameters, settings)
     Ω = Ω_from_E_hat(E_nodes_interior, stationary_sol_T.Ω, stationary_sol_0.Ω, params_T, settings)
     @unpack δ = params_T
     solve_dynamics_output = solve_dynamics(params_T, stationary_sol_T, settings, Ω)
-    return (solve_dynamics_output = solve_dynamics_output, 
-            nodes = E_nodes_interior, 
+    return (solve_dynamics_output = solve_dynamics_output,
+            nodes = E_nodes_interior,
             results = prepare_results(solve_dynamics_output, stationary_sol_T, stationary_sol_0))
 end
 
@@ -156,15 +158,15 @@ function prepare_results(solve_dynamics_output, stationary_T, stationary_0)
     g_T = stationary_T.g
     z_hat_T = stationary_T.z_hat
     Ω_T = stationary_T.Ω
-    log_c_T = log(c(L_tilde_T, Ω_T, z_bar(z_hat_T, Ω_T, parameters))) 
+    log_c_T = log(c(L_tilde_T, Ω_T, z_bar(z_hat_T, Ω_T, parameters)))
 
     # interpolates for welfare integrals
-    interpolated_L_tilde(t) = L_tilde(sol(t)[P+1], sol(t)[P+2], Ω(t), sol(t)[P+3], S(sol(t)[P+1], parameters), parameters) # recall that the P+1-th element of sol is g, P+2-nd is z_hat, P+3-rd is E 
+    interpolated_L_tilde(t) = L_tilde(sol(t)[P+1], sol(t)[P+2], Ω(t), sol(t)[P+3], S(sol(t)[P+1], parameters), parameters) # recall that the P+1-th element of sol is g, P+2-nd is z_hat, P+3-rd is E
     interpolated_z_bar(t) = z_bar(sol(t)[P+2], Ω(t), parameters)
     interpolated_c(t) = c(interpolated_L_tilde(t), Ω(t), interpolated_z_bar(t))
     log_c(t) = log(interpolated_c(t))
-    
-    # welfare rows for dataframe 
+
+    # welfare rows for dataframe
     log_M(t) = quadgk(t -> sol(t)[P+1], 0, t)[1]
     U(t) = quadgk(τ -> exp(-ρ*τ)*(log_M(t+τ) + log_c(t+τ)), 0, (T-t))[1] + exp(-ρ*(T-t))*(g_T + ρ*(log_c_T + g_T * T))/(ρ^2) # (C.83)
 
@@ -201,7 +203,7 @@ function prepare_results(solve_dynamics_output, stationary_T, stationary_0)
     ts_0 = settings.pre_shock_times
     for t in ts_0
         push!(results, merge(stationary_data, (t = t, log_M = t * stationary_data.g)))
-    end 
+    end
 
     return sort!(results) # sort results again to keep time in the right order
 end
@@ -222,14 +224,14 @@ function Ω_from_E_hat(E_nodes_interior, Ω_T, Ω_0, parameters, settings)
     Ω_solution = DifferentialEquations.solve(ODEProblem(Ω_derivative, Ω_0, (0.0, T)), reltol = 1e-15, tstops = tstops) # if this fails, error will be thrown
 
     function Ω(t)
-        if t > T 
+        if t > T
             return Ω_T
-        elseif t > 0 && t <= T 
+        elseif t > 0 && t <= T
             return Ω_solution(t)
-        else # useful for fixed point approach 
+        else # useful for fixed point approach
             return Ω_0
-        end 
-    end 
+        end
+    end
 
     return Ω
 end

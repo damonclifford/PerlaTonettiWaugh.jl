@@ -13,7 +13,9 @@ parameter_defaults = @with_kw (ρ = 0.0215,
                                 μ = -0.0189,
                                 δ = 0.02,
                                 d_0 = 3.0426,
-                                d_T = 2.83834)
+                                d_T = 2.83834,
+                                χ_p = χ, # planner's chi, set with lump-sum taxes
+                                ζ_p = ζ) 
 
 settings_defaults = @with_kw (z_ex = unique([range(0., 0.1, length = 150); range(0.1, 1., length = 100); range(1., 5, length = 50)]),
                                 T = 75.0,
@@ -41,8 +43,8 @@ end
 default_stationary_x0(parameters, settings) = [parameters.ρ * 0.75; 2.0; 0.57]
 
 model_cachename(parameters, settings) = join(hash((
-        parameters = parameters, 
-        settings = merge(settings, (interp = typeof(settings.interp), 
-                                    stationary_x0 = typeof(settings.stationary_x0), 
+        parameters = parameters,
+        settings = merge(settings, (interp = typeof(settings.interp),
+                                    stationary_x0 = typeof(settings.stationary_x0),
                                     fixedpoint_x0 = typeof(settings.fixedpoint_x0)))
 )))

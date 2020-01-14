@@ -19,8 +19,8 @@ end
 
 w(z_bar, parameters) = (parameters.σ - 1)/(parameters.σ) * z_bar # (C.13)
 
-function x(w, parameters)
-    @unpack ζ, Theta, η = parameters
+function x(w, ζ, parameters) # ζ is either ζ_p or ζ
+    @unpack Theta, η = parameters
     return ζ * (1 - η + η * Theta / w) # (C.14)
 end
 
@@ -30,7 +30,7 @@ function λ_ii(z_hat, parameters)
 end
 
 c(L_tilde, Ω, z_bar) = (1 - L_tilde)*z_bar # (C.15) and (58)
-entry_residual(v_1, Ξ₁, parameters) = Ξ₁*v_1 - parameters.ζ*(1-parameters.χ)/parameters.χ # (56)
+entry_residual(v_1, Ξ₁, parameters) = Ξ₁*v_1 - parameters.ζ_p*(1- parameters.χ_p)/parameters.χ_p # (56)
 π_min(L_tilde, z_bar, parameters) = (1 - L_tilde) / ((parameters.σ-1)*z_bar^(parameters.σ-1)) # (38)
 
 function π_rat(z_hat, π_min, parameters)
