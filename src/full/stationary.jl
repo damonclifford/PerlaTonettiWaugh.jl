@@ -5,7 +5,7 @@ function stationary_algebraic(parameters, settings)
     converged(sol) || error("Solver didn't converge.")
     g, z_hat, Ω = sol.zero
     @assert z_hat > 1 && Ω > 0 && g > 0
-    staticvalues = staticvals([g, z_hat, Ω], parameters) # uses undistorted parameters (only for return)
+    staticvalues = staticvals([g, z_hat, Ω], parameters) # uses undistorted parameters (except x)
 
     # calculate value function using differential objects based on the grid
     @unpack z_ex = settings
@@ -43,7 +43,7 @@ function stationary_algebraic_aux(vals, parameters)
     denom_1 = a*(g - r) # (C.19)
     num_1 = ν*(N-1)*(θ - σ + 1)*(d^(1 - σ)*(θ + ν)*z_hat^(-θ + σ - 1)-b*θ*z_hat^(-θ-ν)) # (C.19)
     num_2 = θ*(ν*(N-1)*d^(1-σ)*(θ+ν)*z_hat^(-θ + σ -1) + (ν + σ - 1)*(θ + ν - σ + 1)) # (C.19)
-    return [x_p/π_min - a*(χ_p/(1-χ_p))*(σ + ν - 1)/ν, # (C.18)
+    return [x/π_min - a*(χ_p/(1-χ_p))*(σ + ν - 1)/ν, # (C.18)
             1 + (σ-1)/ν - (num_1/denom_1 + num_2)/big_denom + (χ_p/(1-χ_p))*(σ + ν - 1)/(ν), # (C.19)
             π_min - (1- L_tilde)/((σ -1)*z_bar^(σ-1))] # (C.20)
 end
