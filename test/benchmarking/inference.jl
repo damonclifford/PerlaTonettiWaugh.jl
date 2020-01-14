@@ -3,7 +3,7 @@
 function testdiffusion()
     ξ = 1.0
     z = 0.:0.01:5.
-    bc = (Mixed(ξ), Mixed(ξ))
+    bc = (Mixed(ξ = ξ), Mixed(ξ = ξ))
     a = (L₁₋bc = L₁₋bc(z, bc), L₁₊ = L₁₊bc(z, bc), L₂bc = L₂bc(z, bc))
     b = (L₁₋bc = L₁₋bc(collect(z), bc), L₁₊ = L₁₊bc(collect(z), bc), L₂bc = L₂bc(collect(z), bc)) # test both the AbstractRange and StepRangeLen methods
     return (a = a, b = b)

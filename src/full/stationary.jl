@@ -11,7 +11,7 @@ function stationary_algebraic(parameters, settings)
     @unpack z_ex = settings
     z = z_ex[2:end-1]
     @unpack θ, σ = parameters
-    bc = (Mixed(σ-1), Mixed(σ-1)) # boundary conditions for differential operators
+    bc = (Mixed(ξ = σ-1), Mixed(ξ = σ-1)) # boundary conditions for differential operators
     L_1_minus = L₁₋bc(z_ex, bc) # use backward difference as the drift is negative
     L_2 = L₂bc(z_ex, bc)
     ω = ω_weights(z_ex, θ, σ-1) # get quadrature weights for the distribution on the rescaled grid.
@@ -101,7 +101,7 @@ function stationary_numerical(parameters, settings)
     z = z_ex[2:end-1] # form a uniform extended grid
 
     # Differential objects we need for the residuals
-    bc = (Mixed(σ-1), Mixed(σ-1)) # boundary conditions for differential operators
+    bc = (Mixed(ξ = σ-1), Mixed(ξ = σ-1)) # boundary conditions for differential operators
     L_1_minus = L₁₋bc(z_ex, bc) # use backward difference as the drift is negative
     L_2 = L₂bc(z_ex, bc)
     ω = ω_weights(z_ex, θ, σ-1) # Get quadrature weights for the distribution on the rescaled grid.

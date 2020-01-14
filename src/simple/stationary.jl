@@ -18,7 +18,7 @@ function stationary_numerical_simple(parameters, settings)
 
     ω = ω_weights(z_ex, θ, 1) # (26), see utils/quadrature.jl
 
-    bc = (Mixed(1), Mixed(1)) # boundary conditions for differential operators
+    bc = (Mixed(ξ = 1), Mixed(ξ = 1)) # boundary conditions for differential operators
     L_1_minus = L₁₋bc(z_ex, bc) # use backward difference as the drift is negative
     L_2 = L₂bc(z_ex, bc)
 
