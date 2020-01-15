@@ -66,9 +66,9 @@ function staticvals(vals, parameters)
     z_bar_T = z_bar(z_hat, Ω, parameters)
     w_T = w(z_bar_T, parameters)
     x_T = x(w_T, parameters)
-    π_min_T = (d^(σ-1) * κ)/(z_hat^(σ-1)) # (C.12, inverted to express π_min as a function of parameters and z_hat)
+    π_min_T = (d^(σ-1) * κ)/(z_hat^(σ-1)) # (C.12, inverted to express π_min as a function of parameters and z_hat) This is where the export threshold is used.  pi_min(L_tilde, z_bar)  is already used in the system of equations
     π_rat_T = π_rat(z_hat, parameters)
-    
+
     return (F = F, r = r, ν = ν, a = a, b = b, S = S_T, L_tilde = L_tilde_T, L_tilde_x = L_tilde_x_T, L_tilde_E = L_tilde_E_T, L_tilde_a = L_tilde_a_T,
             z_bar = z_bar_T, w = w_T, x = x_T, π_min = π_min_T, π_rat = π_rat_T)
 end
