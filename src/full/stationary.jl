@@ -1,3 +1,16 @@
+function stationary_algebraic_given_g(g, parameters, settings)
+    x0 = settings.stationary_x0(parameters, settings)[2, 3] # extract the z_hat, Omega
+    @assert parameters.υ > 0 && parameters.κ > 0
+    sol = nlsolve([g, x...] -> stationary_algebraic_aux(x, parameters)[1, 3], x0, inplace = false) # x0 is 2-dimensional 
+    converged(sol) || error("Solver didn't converge.")
+    z_hat, Ω = sol.zero
+    @assert z_hat > 1 && Ω > 0 
+    staticvalues = staticvals([g, z_hat, Ω], parameters) # uses undistorted parameters (except x)
+
+    return merge(staticvalues, merge((g = g, z_hat = z_hat, Ω = Ω,), welfare([g, z_hat, Ω], parameters))) # calculate quantities and return    
+end
+
+
 function stationary_algebraic(parameters, settings)
     x0 = settings.stationary_x0(parameters, settings)
     @assert parameters.υ > 0 && parameters.κ > 0
