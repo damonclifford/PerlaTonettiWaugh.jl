@@ -95,3 +95,35 @@ end
         @test sol.L_tilde ≈ sol.L_tilde_a + sol.L_tilde_E + sol.L_tilde_x
     end
 end
+
+@testset "Fixed g Method" begin 
+    # comparison to full method 
+    d_0 = 3.0426
+    d_T =  2.83834
+    params = parameter_defaults(γ = 1)
+    settings = settings_defaults();
+    params_0 = merge(params, (d = d_0,))
+    params_T = merge(params, (d = d_T,))
+
+    full_0 = stationary_algebraic(params_0, settings)
+    full_T = stationary_algebraic(params_T, settings)
+    g_0 = full_0.g 
+    g_T = full_T.g 
+
+    constrained_0 = stationary_algebraic_given_g(g_0, params_0, settings)
+    @test constrained_0.z_hat ≈ full_0.z_hat 
+    @test constrained_0.Ω ≈ full_0.Ω
+    constrained_T = stationary_algebraic_given_g(g_T, params_T, settings)
+    @test constrained_T.z_hat ≈ full_T.z_hat 
+    @test constrained_T.Ω ≈ full_T.Ω
+
+    # perturbation tests 
+    g_0 += 0.0001
+    g_T -= 0.0001
+    constrained_0_perturbed = stationary_algebraic_given_g(g_0, params_0, settings)
+    constrained_T_perturbed = stationary_algebraic_given_g(g_T, params_T, settings)
+    @test abs(constrained_0_perturbed.z_hat - constrained_0.z_hat) < 1e-3
+    @test abs(constrained_0_perturbed.Ω - constrained_0.Ω) < 1e-3
+    @test abs(constrained_T_perturbed.z_hat - constrained_T.z_hat) < 1e-3 
+    @test abs(constrained_T_perturbed.Ω - constrained_T.Ω) < 1e-3 
+end 
