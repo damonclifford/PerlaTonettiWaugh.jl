@@ -24,7 +24,7 @@ export parameter_defaults, settings_defaults, default_fixedpoint_x0, default_sta
 export parameters_simple, settings_simple
 export solve_simple_transition
 export stationary_algebraic, stationary_numerical, stationary_algebraic_simple, stationary_numerical_simple, stationary_algebraic_given_g
-export ω_weights, solve_dynamics, welfare,
+export ω_weights, solve_dynamics, welfare
 export compare_steady_states
 export solve_transition, prepare_results
 export consumption_equivalent
