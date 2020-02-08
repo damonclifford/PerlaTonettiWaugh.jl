@@ -20,6 +20,13 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
     d_U_d = (sol_counterfactual.U_bar - sol_baseline.U_bar)
     total_decomp = U_1 * (partial_c_d + (partial_c_g*partial_g_d)) + U_2 * (partial_g_d + (partial_g_c * partial_c_d))
     check = total_decomp - d_U_d
+    planner_0 = U_1 * ((partial_c_g*partial_g_d)) + U_2 * (partial_g_d)
+
+    decomp_1_frac = (U_1 * (partial_c_d))/total_decomp
+    decomp_2_frac = (U_1 * (partial_c_g*partial_g_d))/total_decomp
+    decomp_3_frac = (U_2 * (partial_g_d))/total_decomp
+    decomp_4_frac = (U_2 * (partial_g_c * partial_c_d))/total_decomp
+    planner_0_frac = decomp_2_frac + decomp_3_frac
 
     return (U_1 = U_1, U_2 = U_2, ∂_c_d = partial_c_d,
                                   ∂_g_d = partial_g_d,
@@ -27,7 +34,13 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
                                   ∂_g_c = partial_g_c,
                                   d_U_d = d_U_d,
                                   total_decomp = total_decomp,
-                                  check = check)
+                                  check = check,
+                                  planner_0 = planner_0,
+                                  decomp_1_frac = decomp_1_frac,
+                                  decomp_2_frac = decomp_2_frac,
+                                  decomp_3_frac = decomp_3_frac,
+                                  decomp_4_frac = decomp_4_frac,
+                                  planner_0_frac = planner_0_frac)
 end
 
 function steady_state_from_c(c_val, z_hat, Ω, parameters, settings)
