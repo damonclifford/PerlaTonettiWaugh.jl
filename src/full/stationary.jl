@@ -10,7 +10,7 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
 
     sol_c_d = steady_state_from_g(sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
     sol_g_d = steady_state_from_c(sol_baseline.c, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
-    sol_c_g = steady_state_from_g((1 + ϵ)*sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
+    sol_c_g = steady_state_from_g((1 + ϵ)*sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_baseline, settings)
     sol_g_c = steady_state_from_c(sol_baseline.c*(1 + ϵ), sol_baseline.z_hat, sol_baseline.Ω, params_baseline, settings)
 
     partial_c_d = (sol_c_d.c - sol_baseline.c)
