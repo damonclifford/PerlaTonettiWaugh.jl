@@ -1,0 +1,111 @@
+
+```julia
+using PerlaTonettiWaugh, Parameters, Plots, DataFrames, Optim, LaTeXStrings
+```
+
+```julia
+params_minimal = parameter_defaults(γ = 1)
+settings = settings_defaults();
+```
+
+### Experiment 1: (Constrained) Planner's changing ζ_p and χ_p = χ
+
+```julia
+params_minimal = parameter_defaults(γ = 1)
+d_baseline = params_minimal.d_0
+params_baseline = merge(params_minimal, (d = d_baseline,));
+
+ζ_p_range = params_baseline.ζ-0.1:0.005:params_baseline.ζ+1.0
+d = DataFrame()
+for ζ_p in ζ_p_range
+    params_constrained = merge(params_baseline, (ζ_p = ζ_p, ζ = params_baseline.ζ))
+    CE_constrained = stationary_algebraic(params_constrained, settings) # competitive equilibrium
+    push!(d, CE_constrained)
+end
+```
+
+```julia
+plot(ζ_p_range, [d.U_bar d.g d.z_hat d.Ω d.L_tilde d.λ_ii d.w d.c d.S],
+    layout=9,
+    title = ["U_bar" "g" "z_hat" "Omega" "L_tilde" "lambda_ii" "w" "c" "S"], xlabel = L"\zeta_p", legend = false)
+```
+
+```julia
+plot(ζ_p_range, [d.L_tilde d.L_tilde_E d.L_tilde_x d.L_tilde_a], layout=4,
+    title = ["L_tilde" "L_tilde_E" "L_tilde_x" "L_tilde_a"], xlabel = L"\zeta_p", legend = false)
+```
+
+```julia
+plot(ζ_p_range, [d.π_min d.π_rat d.z_bar], layout=3,
+    title = ["pi_min" "pi_rat" "z_bar"], xlabel = L"\zeta_p", legend = false)
+```
+
+### Experiment 2: (Constrained) Planner's  ζ_p and enforcing ζ_p(1 - χ_p)/χ_p == ζ(1 - χ)/χ
+
+```julia
+params_minimal = parameter_defaults(γ = 1)
+d_baseline = params_minimal.d_0
+params_baseline = merge(params_minimal, (d = d_baseline,));
+
+ζ_p_range = params_baseline.ζ-0.6:0.005:params_baseline.ζ+0.05
+d = DataFrame()
+for ζ_p in ζ_p_range
+    χ = params_baseline.χ
+    ζ = params_baseline.ζ
+    χ_p = ζ_p*χ/(ζ - ζ * χ + ζ_p*χ)
+    params_constrained = merge(params_baseline, (ζ_p = ζ_p, ζ = ζ, χ_p = χ_p))
+    CE_constrained = stationary_algebraic(params_constrained, settings) # competitive equilibrium
+    push!(d, CE_constrained)
+end
+```
+
+```julia
+plot(ζ_p_range, [d.U_bar d.g d.z_hat d.Ω d.L_tilde d.λ_ii d.w d.c d.S],
+    layout=9,
+    title = ["U_bar" "g" "z_hat" "Omega" "L_tilde" "lambda_ii" "w" "c" "S"], xlabel = L"\zeta_p", legend = false)
+```
+
+```julia
+plot(ζ_p_range, [d.L_tilde d.L_tilde_E d.L_tilde_x d.L_tilde_a], layout=4,
+    title = ["L_tilde" "L_tilde_E" "L_tilde_x" "L_tilde_a"], xlabel = L"\zeta_p", legend = false)
+```
+
+```julia
+plot(ζ_p_range, [d.π_min d.π_rat d.z_bar], layout=3,
+    title = ["pi_min" "pi_rat" "z_bar"], xlabel = L"\zeta_p", legend = false)
+```
+
+### Experiment 3: (Constrained) Planner's  ζ_p and enforcing ζ_p χ_p == ζ χ
+
+```julia
+params_minimal = parameter_defaults(γ = 1)
+d_baseline = params_minimal.d_0
+params_baseline = merge(params_minimal, (d = d_baseline,));
+
+ζ_p_range = params_baseline.ζ-0.1:0.005:params_baseline.ζ+0.05
+d = DataFrame()
+for ζ_p in ζ_p_range
+    χ = params_baseline.χ
+    ζ = params_baseline.ζ
+    χ_p = ζ/ζ_p*χ
+    params_constrained = merge(params_baseline, (ζ_p = ζ_p, ζ = ζ, χ_p = χ_p))
+    CE_constrained = stationary_algebraic(params_constrained, settings) # competitive equilibrium
+    push!(d, CE_constrained)
+end
+```
+
+```julia
+plot(ζ_p_range, [d.U_bar d.g d.z_hat d.Ω d.L_tilde d.λ_ii d.w d.c d.S],
+    layout=9,
+    title = ["U_bar" "g" "z_hat" "Omega" "L_tilde" "lambda_ii" "w" "c" "S"], xlabel = L"\zeta_p", legend = false)
+```
+
+```julia
+plot(ζ_p_range, [d.L_tilde d.L_tilde_E d.L_tilde_x d.L_tilde_a], layout=4,
+    title = ["L_tilde" "L_tilde_E" "L_tilde_x" "L_tilde_a"], xlabel = L"\zeta_p", legend = false)
+```
+
+```julia
+plot(ζ_p_range, [d.π_min d.π_rat d.z_bar], layout=3,
+    title = ["pi_min" "pi_rat" "z_bar"], xlabel = L"\zeta_p", legend = false)
+```

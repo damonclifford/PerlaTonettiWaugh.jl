@@ -1,0 +1,179 @@
+
+```julia
+using PerlaTonettiWaugh, Parameters, Plots
+```
+
+```julia
+d_baseline = 3.0426 # d_0
+d_open = 2.83834 # d_T
+params = parameter_defaults(γ = 1)
+settings = settings_defaults();
+params_baseline = merge(params, (d = d_baseline,))
+params_open = merge(params, (d = d_open,));
+```
+
+### Baseline Case
+
+```julia
+stationary_baseline = stationary_algebraic(params_baseline, settings);
+println("g: $(stationary_baseline.g)")
+println("z_hat: $(stationary_baseline.z_hat)")
+println("Omega: $(stationary_baseline.Ω)")
+println("c: $(stationary_baseline.c)")
+println("U_bar: $(stationary_baseline.U_bar)")
+println("lambda: $(stationary_baseline.λ_ii)")
+println("y: $(stationary_baseline.y)");
+```
+
+### Experiment Function
+
+```julia
+function externality_experiment(d)
+    println("d = $d")
+    println("**************************")
+    println("stationary using supplied d")
+    println("**************************")
+    params_varied = merge(params, (d = d,))
+    stationary_varied = stationary_algebraic(params_varied, settings);
+    println("g: $(stationary_varied.g)")
+    println("z_hat: $(stationary_varied.z_hat)")
+    println("Omega: $(stationary_varied.Ω)")
+    println("c: $(stationary_varied.c)")
+    println("U_bar: $(stationary_varied.U_bar)")
+    println("lambda: $(stationary_varied.λ_ii)")
+    println("y: $(stationary_varied.y)")
+    ACR_full = 100*(-1/params.θ)*log(stationary_varied.λ_ii/stationary_baseline.λ_ii)
+    println("ACR_full: $(ACR_full)")
+
+    println("**************************")
+    println("stationary using baseline g and supplied d")
+    println("**************************")
+    d_U_bar = stationary_varied.U_bar - stationary_baseline.U_bar
+    sol = stationary_algebraic_given_g(stationary_baseline.g, params_varied, settings) # i.e. parameters using inputted d, not d_0
+    println("c: $(sol.c)")
+    println("z_hat: $(sol.z_hat)")
+    println("Omega: $(sol.Ω)")
+    println("lambda: $(sol.λ_ii)")
+    println("U_bar: $(sol.U_bar)")
+    U_bar_partial = sol.U_bar;
+    ACR_partial = 100*(-1/params.θ)*log(sol.λ_ii/stationary_baseline.λ_ii)
+    println("ACR_partial: $(ACR_partial)")
+    
+    println("**************************")
+    println("welfare calculations")
+    println("**************************")
+    @show stationary_varied.U_bar - U_bar_partial   
+    @show c_partial = sol.c
+    @show dc = c_partial - stationary_baseline.c
+    @show dc_partial_frac = 100*(dc)/stationary_baseline.c 
+    @show dg_frac = 100*(stationary_varied.g - stationary_baseline.g)/stationary_baseline.g
+    @show d_U_1 = 1/(stationary_baseline.c * params.ρ) # constant
+    @show d_U_bar - d_U_1  * dc
+    @show d_U_Comp1_frac=100*(d_U_bar-d_U_1*dc)/d_U_bar
+    return nothing
+end
+```
+
+### Experiment #1 (d_T)
+
+```julia
+externality_experiment(d_open)
+```
+
+### Experiment #2 
+
+```julia
+externality_experiment(1 + 0.99*(d_baseline - 1))
+```
+
+### Experiment #3 
+
+```julia
+externality_experiment(1 + 1.1*(d_baseline - 1))
+```
+
+### Experiment 4: Holding g and Omega Fixed
+
+```julia
+# modify the function to use the new method
+function externality_experiment_g_Ω(d)
+    println("d = $d")
+    println("**************************")
+    println("stationary using supplied d")
+    println("**************************")
+    params_varied = merge(params, (d = d,))
+    stationary_varied = stationary_algebraic(params_varied, settings);
+    println("g: $(stationary_varied.g)")
+    println("z_hat: $(stationary_varied.z_hat)")
+    println("Omega: $(stationary_varied.Ω)")
+    println("c: $(stationary_varied.c)")
+    println("U_bar: $(stationary_varied.U_bar)")
+    println("lambda: $(stationary_varied.λ_ii)")
+    println("y: $(stationary_varied.y)")
+    ACR_full = 100*(-1/params.θ)*log(stationary_varied.λ_ii/stationary_baseline.λ_ii)
+    println("ACR_full: $(ACR_full)")
+
+    println("**************************")
+    println("stationary using baseline g, Ω and supplied d")
+    println("**************************")
+    d_U_bar = stationary_varied.U_bar - stationary_baseline.U_bar
+    sol = stationary_algebraic_given_g_Ω(stationary_baseline.g, stationary_baseline.Ω, params_varied, settings) # i.e. parameters using inputted d, not d_0
+    println("c: $(sol.c)")
+    println("z_hat: $(sol.z_hat)")
+    println("Omega: $(sol.Ω)")
+    println("lambda: $(sol.λ_ii)")
+    println("U_bar: $(sol.U_bar)")
+    U_bar_partial = sol.U_bar;
+    ACR_partial = 100*(-1/params.θ)*log(sol.λ_ii/stationary_baseline.λ_ii)
+    println("ACR_partial: $(ACR_partial)")
+    
+    println("**************************")
+    println("welfare calculations")
+    println("**************************")
+    @show stationary_varied.U_bar - U_bar_partial   
+    @show c_partial = sol.c
+    @show dc = c_partial - stationary_baseline.c
+    @show dc_partial_frac = 100*(dc)/stationary_baseline.c 
+    @show dg_frac = 100*(stationary_varied.g - stationary_baseline.g)/stationary_baseline.g
+    @show d_U_1 = 1/(stationary_baseline.c * params.ρ) # constant
+    @show d_U_bar - d_U_1  * dc
+    @show d_U_Comp1_frac=100*(d_U_bar-d_U_1*dc)/d_U_bar
+    return nothing
+end
+```
+
+```julia
+externality_experiment_g_Ω((1 + 0.99*(d_baseline - 1)))
+```
+
+### Mike Calibration
+
+```julia
+params_mike = parameter_defaults( 
+                                    θ = 5.0781, 
+                                    κ = 0.0625,
+                                    χ = 1/4.7024,
+                                    μ = -0.0120,
+                                    υ = 0.0528,
+                                    σ = 3.2047,
+                                    δ = 0.028)
+
+params_mike = merge(params_mike, (d = 2.9770,));
+sol_mike = stationary_algebraic(params_mike, settings);
+```
+
+```julia
+mike_g = sol_mike.g
+```
+
+```julia
+trade_share_mike = 1 - sol_mike.λ_ii
+```
+
+```julia
+consumption_equivalent(sol_mike.U_bar, stationary_baseline.U_bar, params_mike) # only needs rho and gamma, which are constant
+```
+
+```julia
+sol_mike.U_bar - stationary_baseline.U_bar
+```
