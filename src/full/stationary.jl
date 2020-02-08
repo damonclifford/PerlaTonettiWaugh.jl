@@ -18,12 +18,16 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
     partial_c_g = (sol_c_g.c - sol_baseline.c)
     partial_g_c = (sol_g_c.g - sol_baseline.g)
     d_U_d = (sol_counterfactual.U_bar - sol_baseline.U_bar)
+    total_decomp = U_1 * (partial_c_d + (partial_c_g*partial_g_d)) + U_2 * (partial_g_d + (partial_g_c * partial_c_d))
+    check = total_decomp - d_U_d
 
     return (U_1 = U_1, U_2 = U_2, ∂_c_d = partial_c_d,
                                   ∂_g_d = partial_g_d,
                                   ∂_c_g = partial_c_g,
                                   ∂_g_c = partial_g_c,
-                                  d_U_d = d_U_d)
+                                  d_U_d = d_U_d,
+                                  total_decomp = total_decomp,
+                                  check = check)
 end
 
 function steady_state_from_c(c_val, z_hat, Ω, parameters, settings)
