@@ -45,11 +45,12 @@ end
 
 function steady_state_from_c(c_val, z_hat, Ω, parameters, settings)
     @assert parameters.υ > 0 && parameters.κ > 0
+    sol = stationary_algebraic(parameters, settings)
     @assert z_hat > 1 && Ω > 0 # input validation still required
     g_sol = find_zero(x -> begin
         vals = staticvals([x, z_hat, Ω], parameters)
         return c(vals.L_tilde, Ω, vals.z_bar) - c_val
-    end, [0., 0.2]) # error thrown if alg fails
+    end, sol.g, Order2()) # error thrown if alg fails
     staticvalues = staticvals([g_sol, z_hat, Ω], parameters)
     return merge(staticvalues, merge((g = g_sol, z_hat = z_hat, Ω = Ω,), welfare([g_sol, z_hat, Ω], parameters)))
 end
