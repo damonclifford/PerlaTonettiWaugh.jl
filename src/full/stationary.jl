@@ -4,9 +4,9 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
     U_1 = 1/(ρ*sol_baseline.c)
     U_2 = (1/ρ^2)
 
-    d_counterfactual = 1 + (1-ϵ)*(d_baseline - 1);
+    d_counterfactual = 1 + (1-ϵ)*(d - 1);
     params_counterfactual = merge(params_baseline, (d = d_counterfactual,))
-    sol_counterfactual = stationary_algebaric(params_counterfactual, settings)
+    sol_counterfactual = stationary_algebraic(params_counterfactual, settings)
 
     sol_c_d = steady_state_from_g(sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
     sol_g_d = steady_state_from_c(sol_baseline.c, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
