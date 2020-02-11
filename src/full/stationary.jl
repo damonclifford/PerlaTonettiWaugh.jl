@@ -4,43 +4,66 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
     U_1 = 1/(ρ*sol_baseline.c)
     U_2 = (1/ρ^2)
 
-    d_counterfactual = 1 + (1-ϵ)*(d - 1);
+    d_counterfactual = (1+ϵ)*d
     params_counterfactual = merge(params_baseline, (d = d_counterfactual,))
     sol_counterfactual = stationary_algebraic(params_counterfactual, settings)
 
-    sol_c_d = steady_state_from_g(sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
-    sol_g_d = steady_state_from_c(sol_baseline.c, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
-    sol_c_g = steady_state_from_g((1 + ϵ)*sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_baseline, settings)
-    sol_g_c = steady_state_from_c(sol_baseline.c*(1 + ϵ), sol_baseline.z_hat, sol_baseline.Ω, params_baseline, settings)
+    sol_fc_d = steady_state_from_g(sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
+    sol_fc_g = steady_state_from_g((1+ϵ)*sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_baseline, settings)
+    sol_fc_zhat = steady_state_from_g(sol_baseline.g, (1+ϵ)*sol_baseline.z_hat, sol_baseline.Ω, params_baseline, settings)
+    sol_fc_Omega = steady_state_from_g(sol_baseline.g, sol_baseline.z_hat, (1+ϵ)*sol_baseline.Ω, params_baseline, settings)
 
-    partial_c_d = (sol_c_d.c - sol_baseline.c)
-    partial_g_d = (sol_g_d.g - sol_baseline.g)
-    partial_c_g = (sol_c_g.c - sol_baseline.c)
-    partial_g_c = (sol_g_c.g - sol_baseline.g)
-    d_U_d = (sol_counterfactual.U_bar - sol_baseline.U_bar)
-    total_decomp = U_1 * (partial_c_d + (partial_c_g*partial_g_d)) + U_2 * (partial_g_d + (partial_g_c * partial_c_d))
-    check = total_decomp - d_U_d
-    planner_0 = U_1 * ((partial_c_g*partial_g_d)) + U_2 * (partial_g_d)
+    partial_fc_d = (sol_fc_d.c - sol_baseline.c)/(d_counterfactual - sol_baseline.d)
+    partial_fc_g = (sol_fc_g.c - sol_baseline.c)/(sol_fc_g.g - sol_baseline.g)
+    partial_fc_zhat = (sol_fc_zhat.c - sol_baseline.c)/(sol_fc_zhat.z_hat - sol_baseline.z_hat)
+    partial_fc_Omega = (sol_fc_Omega.c - sol_baseline.c)/(sol_fc_Omega.Ω - sol_baseline.Ω)
 
-    decomp_1_frac = (U_1 * (partial_c_d))/total_decomp
-    decomp_2_frac = (U_1 * (partial_c_g*partial_g_d))/total_decomp
-    decomp_3_frac = (U_2 * (partial_g_d))/total_decomp
-    decomp_4_frac = (U_2 * (partial_g_c * partial_c_d))/total_decomp
-    planner_0_frac = decomp_2_frac + decomp_3_frac
+    partial_Omega_d = (sol_counterfactual.Ω - sol_baseline.Ω)/(d_counterfactual - sol_baseline.d)
+    partial_zhat_d = (sol_counterfactual.z_hat - sol_baseline.z_hat)/(d_counterfactual - sol_baseline.d)
+    partial_g_d = (sol_counterfactual.g - sol_baseline.g)/(d_counterfactual - sol_baseline.d)
 
-    return (U_1 = U_1, U_2 = U_2, ∂_c_d = partial_c_d,
+    d_U_d_total = (sol_counterfactual.U_bar - sol_baseline.U_bar)/(d_counterfactual - sol_baseline.d)
+    total_decomp = U_1*(partial_fc_Omega*partial_Omega_d + partial_fc_zhat*partial_zhat_d + partial_fc_g*partial_g_d + partial_fc_d) + U_2*partial_g_d
+    check = total_decomp/d_U_d_total
+
+    decomp_fc_d = partial_fc_d
+    decomp_fc_Omega_Omega_d = partial_fc_Omega*partial_Omega_d
+    decomp_fc_zhat_zhat_d = partial_fc_zhat*partial_zhat_d
+    decomp_fc_g_g_d = partial_fc_g*partial_g_d
+    decomp_g_d = partial_g_d
+
+    ACR_decomp = U_1*partial_fc_d
+    planner_0_g = (U_1*partial_fc_g +U_2)*partial_g_d
+    planner_0_Omega = U_1*partial_fc_Omega*partial_Omega_d
+    planner_0_zhat = U_1*partial_fc_zhat*partial_zhat_d
+
+    ACR_decomp_frac = ACR_decomp/total_decomp
+    planner_0_g_frac = planner_0_g/total_decomp
+    planner_0_Omega_frac = planner_0_Omega/total_decomp
+    planner_0_zhat_frac = planner_0_zhat/total_decomp
+
+    return (U_1 = U_1, U_2 = U_2, ∂_fc_d = partial_fc_d,
+                                  ∂_fc_g = partial_fc_g,
+                                  ∂_fc_zhat = partial_fc_zhat,
+                                  ∂_fc_Omega = partial_fc_Omega,
                                   ∂_g_d = partial_g_d,
-                                  ∂_c_g = partial_c_g,
-                                  ∂_g_c = partial_g_c,
-                                  d_U_d = d_U_d,
+                                  ∂_zhat_d = partial_zhat_d,
+                                  ∂_Omega_d = partial_Omega_d,
+                                  d_U_d_total = d_U_d_total,
                                   total_decomp = total_decomp,
                                   check = check,
-                                  planner_0 = planner_0,
-                                  decomp_1_frac = decomp_1_frac,
-                                  decomp_2_frac = decomp_2_frac,
-                                  decomp_3_frac = decomp_3_frac,
-                                  decomp_4_frac = decomp_4_frac,
-                                  planner_0_frac = planner_0_frac)
+                                  decomp_fc_d = decomp_fc_d,
+                                  decomp_fc_Omega_Omega_d = decomp_fc_Omega_Omega_d ,
+                                  decomp_fc_zhat_zhat_d = decomp_fc_zhat_zhat_d,
+                                  decomp_fc_g_g_d = decomp_fc_g_g_d,
+                                  decomp_g_d = decomp_g_d,
+                                  ACR_decomp = ACR_decomp,
+                                  planner_0_g = planner_0_g,
+                                  planner_0_Omega = planner_0_Omega,
+                                  planner_0_zhat = planner_0_zhat,
+                                  planner_0_g_frac = planner_0_g_frac,
+                                  planner_0_Omega_frac = planner_0_Omega_frac
+                                  planner_0_zhat_frac = planner_0_zhat_frac)
 end
 
 function steady_state_from_c(c_val, z_hat, Ω, parameters, settings)
