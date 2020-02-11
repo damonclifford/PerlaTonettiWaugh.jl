@@ -8,6 +8,8 @@ function total_derivative(params_baseline, ϵ = 0.000001, settings = settings_de
     params_counterfactual = merge(params_baseline, (d = d_counterfactual,))
     sol_counterfactual = stationary_algebraic(params_counterfactual, settings)
 
+	ACR = 100*(-1/params_baseline.θ)*log(sol_counterfactual.λ_ii/sol_baseline.λ_ii)
+
     sol_fc_d = steady_state_from_g(sol_baseline.g, sol_baseline.z_hat, sol_baseline.Ω, params_counterfactual, settings)
     sol_fc_g = steady_state_from_g(sol_baseline.g + ϵ, sol_baseline.z_hat, sol_baseline.Ω, params_baseline, settings)
     sol_fc_zhat = steady_state_from_g(sol_baseline.g, sol_baseline.z_hat + ϵ, sol_baseline.Ω, params_baseline, settings)
@@ -46,33 +48,34 @@ function total_derivative(params_baseline, ϵ = 0.000001, settings = settings_de
     planner_0_Omega_frac = planner_0_Omega/total_decomp
     planner_0_zhat_frac = planner_0_zhat/total_decomp
 
-    return (U_1 = U_1, U_2 = U_2, ∂_fc_d = partial_fc_d,
-                                  ∂_fc_g = partial_fc_g,
-                                  ∂_fc_zhat = partial_fc_zhat,
-                                  ∂_fc_Omega = partial_fc_Omega,
-                                  ∂_g_d = partial_g_d,
-                                  ∂_zhat_d = partial_zhat_d,
-                                  ∂_Omega_d = partial_Omega_d,
-                                  d_U_d_total = d_U_d_total,
-                                  total_decomp = total_decomp,
-                                  check = check,
-                                  decomp_fc_d = decomp_fc_d,
-                                  decomp_fc_Omega_Omega_d = decomp_fc_Omega_Omega_d ,
-                                  decomp_fc_zhat_zhat_d = decomp_fc_zhat_zhat_d,
-                                  decomp_fc_g_g_d = decomp_fc_g_g_d,
-                                  decomp_g_d = decomp_g_d,
-                                  planner_0_g = planner_0_g,
-                                  planner_0_Omega = planner_0_Omega,
-                                  planner_0_zhat = planner_0_zhat,
-                                  U1_partial_fc_d_frac = U1_partial_fc_d_frac,
-                                  U1_decomp_fc_Omega_Omega_d_frac = U1_decomp_fc_Omega_Omega_d_frac,
-								  U1_decomp_fc_zhat_zhat_d_frac = U1_decomp_fc_zhat_zhat_d_frac,
-								  U1_decomp_fc_g_g_d_frac = U1_decomp_fc_g_g_d_frac,
-								  U2_decomp_g_d_frac = U2_decomp_g_d_frac,
-								  planner_0_g_frac = planner_0_g_frac,
-                                  planner_0_Omega_frac = planner_0_Omega_frac,
-                                  planner_0_zhat_frac = planner_0_zhat_frac)
+    return (check = check, d_U_d_total = d_U_d_total, U_1 = U_1, U_2 = U_2,
+										ACR = ACR,
+										∂_fc_d = partial_fc_d,
+										∂_fc_g = partial_fc_g,
+										∂_fc_zhat = partial_fc_zhat,
+										∂_fc_Omega = partial_fc_Omega,
+										∂_g_d = partial_g_d,
+										∂_zhat_d = partial_zhat_d,
+										∂_Omega_d = partial_Omega_d,
+										total_decomp = total_decomp,
+										decomp_fc_d = decomp_fc_d,
+										decomp_fc_Omega_Omega_d = decomp_fc_Omega_Omega_d ,
+										decomp_fc_zhat_zhat_d = decomp_fc_zhat_zhat_d,
+										decomp_fc_g_g_d = decomp_fc_g_g_d,
+										decomp_g_d = decomp_g_d,
+										planner_0_g = planner_0_g,
+										planner_0_Omega = planner_0_Omega,
+										planner_0_zhat = planner_0_zhat,
+										U1_partial_fc_d_frac = U1_partial_fc_d_frac,
+										U1_decomp_fc_Omega_Omega_d_frac = U1_decomp_fc_Omega_Omega_d_frac,
+										U1_decomp_fc_zhat_zhat_d_frac = U1_decomp_fc_zhat_zhat_d_frac,
+										U1_decomp_fc_g_g_d_frac = U1_decomp_fc_g_g_d_frac,
+										U2_decomp_g_d_frac = U2_decomp_g_d_frac,
+										planner_0_g_frac = planner_0_g_frac,
+										planner_0_Omega_frac = planner_0_Omega_frac,
+										planner_0_zhat_frac = planner_0_zhat_frac)
 end
+
 
 function steady_state_from_c(c_val, z_hat, Ω, parameters, settings)
     @assert parameters.υ > 0 && parameters.κ > 0
