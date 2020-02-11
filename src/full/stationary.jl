@@ -61,6 +61,7 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
                                   planner_0_g = planner_0_g,
                                   planner_0_Omega = planner_0_Omega,
                                   planner_0_zhat = planner_0_zhat,
+                                  ACR_decomp_frac = ACR_decomp_frac,
                                   planner_0_g_frac = planner_0_g_frac,
                                   planner_0_Omega_frac = planner_0_Omega_frac,
                                   planner_0_zhat_frac = planner_0_zhat_frac)
