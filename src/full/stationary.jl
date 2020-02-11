@@ -33,7 +33,7 @@ function total_derivative(params_baseline, ϵ = 0.000001, settings = settings_de
     decomp_g_d = partial_g_d
 
     U1_partial_fc_d_frac = U_1*partial_fc_d/total_decomp
-    U1_decomp_fc_Omega_Omega_d_frac = U_1*decomp_fc_Omega_Omega_d//total_decomp
+    U1_decomp_fc_Omega_Omega_d_frac = U_1*decomp_fc_Omega_Omega_d/total_decomp
 	U1_decomp_fc_zhat_zhat_d_frac = U_1*decomp_fc_zhat_zhat_d/total_decomp
 	U1_decomp_fc_g_g_d_frac = U_1*decomp_fc_g_g_d/total_decomp
 	U2_decomp_g_d_frac = U2*decomp_g_d/total_decomp
