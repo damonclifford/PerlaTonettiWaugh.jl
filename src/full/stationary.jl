@@ -13,7 +13,7 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
     sol_fc_zhat = steady_state_from_g(sol_baseline.g, (1+ϵ)*sol_baseline.z_hat, sol_baseline.Ω, params_baseline, settings)
     sol_fc_Omega = steady_state_from_g(sol_baseline.g, sol_baseline.z_hat, (1+ϵ)*sol_baseline.Ω, params_baseline, settings)
 
-    partial_fc_d = (sol_fc_d.c - sol_baseline.c)/(d_counterfactual - sol_baseline.d)
+    partial_fc_d = (sol_fc_d.c - sol_baseline.c)/(d_counterfactual - params_baseline.d)
     partial_fc_g = (sol_fc_g.c - sol_baseline.c)/(sol_fc_g.g - sol_baseline.g)
     partial_fc_zhat = (sol_fc_zhat.c - sol_baseline.c)/(sol_fc_zhat.z_hat - sol_baseline.z_hat)
     partial_fc_Omega = (sol_fc_Omega.c - sol_baseline.c)/(sol_fc_Omega.Ω - sol_baseline.Ω)
