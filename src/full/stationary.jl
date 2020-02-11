@@ -18,11 +18,11 @@ function total_derivative(params_baseline, ϵ = 0.01, settings = settings_defaul
     partial_fc_zhat = (sol_fc_zhat.c - sol_baseline.c)/(sol_fc_zhat.z_hat - sol_baseline.z_hat)
     partial_fc_Omega = (sol_fc_Omega.c - sol_baseline.c)/(sol_fc_Omega.Ω - sol_baseline.Ω)
 
-    partial_Omega_d = (sol_counterfactual.Ω - sol_baseline.Ω)/(d_counterfactual - sol_baseline.d)
-    partial_zhat_d = (sol_counterfactual.z_hat - sol_baseline.z_hat)/(d_counterfactual - sol_baseline.d)
-    partial_g_d = (sol_counterfactual.g - sol_baseline.g)/(d_counterfactual - sol_baseline.d)
+    partial_Omega_d = (sol_counterfactual.Ω - sol_baseline.Ω)/(d_counterfactual - params_baseline.d)
+    partial_zhat_d = (sol_counterfactual.z_hat - sol_baseline.z_hat)/(d_counterfactual - params_baseline.d)
+    partial_g_d = (sol_counterfactual.g - sol_baseline.g)/(d_counterfactual - params_baseline.d)
 
-    d_U_d_total = (sol_counterfactual.U_bar - sol_baseline.U_bar)/(d_counterfactual - sol_baseline.d)
+    d_U_d_total = (sol_counterfactual.U_bar - sol_baseline.U_bar)/(d_counterfactual - params_baseline.d)
     total_decomp = U_1*(partial_fc_Omega*partial_Omega_d + partial_fc_zhat*partial_zhat_d + partial_fc_g*partial_g_d + partial_fc_d) + U_2*partial_g_d
     check = total_decomp/d_U_d_total
 
