@@ -5,7 +5,7 @@
                 unique([range(0.0, 5.0, length = 500)' range(5.0, 7.0, length = 200)']), # irregular
             ]
 # Overall parameters.
-    params = @with_kw (ρ = 0.02, σ = 4.2508, N = 10, θ = 5.1269, γ = 1.01, d = 2.3701, κ = 0.013, ζ = 1, η = 0, Theta = 1, χ = 1/(2.1868), υ = 0.0593, μ = 0, δ = 0.053, ζ_p = ζ, χ_p = χ)
+    params = @with_kw (ρ = 0.02, σ = 4.2508, N = 10, θ = 5.1269, γ = 1.01, d = 2.3701, κ = 0.013, ζ = 1, η = 0, Theta = 1, χ = 1/(2.1868), υ = 0.0593, μ = 0, δ = 0.053)
     baseline = params()
 # Solver settings.
     initial_values = [  [0.25, 3.0, 1.0],
@@ -128,7 +128,7 @@ end
     @test abs(constrained_T_perturbed.Ω - constrained_T.Ω) < 1e-3
 end
 
-@testset "Fixed g, Ω method" begin 
+@testset "Fixed g, Ω method" begin
     d_0 = 3.0426
     d_T =  2.83834
     params = parameter_defaults(γ = 1)
@@ -158,13 +158,13 @@ end
     @test constrained_0_fudged.L_tilde ≈ constrained_0.L_tilde atol = 1e-4
 end
 
-@testset "fixed c method" begin 
+@testset "fixed c method" begin
     d_0 = 3.0426
     params = parameter_defaults(γ = 1)
     params_0 = merge(params, (d = d_0,))
     settings = settings_defaults()
     full_0 = stationary_algebraic(params_0, settings)
-    
+
     sol_c = steady_state_from_c(full_0.c, full_0.z_hat, full_0.Ω, params_0, settings)
     for k in keys(sol_c)
         sol_c[k] isa Number && @test sol_c[k] ≈ full_0[k]
@@ -176,13 +176,13 @@ end
     end
 end
 
-# @testset "fixed lambda method" begin 
+# @testset "fixed lambda method" begin
 #     d_0 = 3.0426
 #     params = parameter_defaults(γ = 1)
 #     params_0 = merge(params, (d = d_0,))
 #     settings = settings_defaults()
 #     full_0 = stationary_algebraic(params_0, settings)
-    
+
 #     sol_λ = steady_state_from_λ(full_0.λ_ii, full_0.g, full_0.Ω, params_0, settings)
 #     for k in keys(sol_λ)
 #         sol_λ[k] isa Number && @test sol_λ[k] ≈ full_0[k]

@@ -48,14 +48,12 @@ end
 
 # Calculate the transition dynamics given a fixed Ω(t) function
 function solve_dynamics(parameters, stationary_sol_T, settings, Ω)
-    @unpack ρ, σ, N, θ, γ, d, κ, ζ, η, Theta, χ, υ, μ, δ, ζ_p, χ_p = parameters
+    @unpack ρ, σ, N, θ, γ, d, κ, ζ, η, Theta, χ, υ, μ, δ = parameters
     @unpack z_ex, T, tstops = settings
     z = z_ex[2:end-1]
     P = length(z)
     @assert γ ≈ 1 # These are the only supported parameters for the transition dynamics at this point
     @assert η == 0
-    @assert χ == χ_p "Chi_p must equal chi for the dynamic problem"
-    @assert ζ == ζ_p "Zeta_p must equal zeta for the dynamic problem"
 
     # unpack the stationary solution
     v_T = stationary_sol_T.v_tilde

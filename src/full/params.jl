@@ -13,9 +13,7 @@ parameter_defaults = @with_kw (ρ = 0.0215,
                                 μ = -0.0189,
                                 δ = 0.02,
                                 d_0 = 3.0426,
-                                d_T = 2.83834,
-                                χ_p = χ, # planner's chi, set with lump-sum taxes
-                                ζ_p = ζ) 
+                                d_T = 2.83834) 
 
 settings_defaults = @with_kw (z_ex = unique([range(0., 0.1, length = 150); range(0.1, 1., length = 100); range(1., 5, length = 50)]),
                                 T = 75.0,
