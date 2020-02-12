@@ -114,7 +114,7 @@ function stationary_algebraic_given_g(g, parameters, settings)
     converged(sol) || error("Solver didn't converge.")
     z_hat, Ω = sol.zero
     @assert z_hat > 1 && Ω > 0
-    staticvalues = staticvals([g, z_hat, Ω], parameters) # uses undistorted parameters (except x)
+    staticvalues = staticvals([g, z_hat, Ω], parameters) 
     return merge(staticvalues, merge((g = g, z_hat = z_hat, Ω = Ω,), welfare([g, z_hat, Ω], parameters))) # calculate quantities and return
 end
 
@@ -156,7 +156,7 @@ end
 
 # Kernel for the algebraic stationary.
 function stationary_algebraic_aux(vals, parameters)
-    @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, υ, μ, δ = parameters
+    @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, υ, μ, δ, χ, ζ = parameters
     @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, x, π_min = staticvals(vals, parameters)
     g, z_hat, Ω = vals
 
@@ -198,7 +198,7 @@ end
 function stationary_numerical_given_vals(vals, p, parameters, settings)
     g, z_hat, Ω = vals
     @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, π_min = staticvals([g, z_hat, Ω], parameters)
-    @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, υ, μ, δ = parameters
+    @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, ζ, χ, υ, μ, δ = parameters
     @unpack Ξ₁, L_1_minus, L_2, ω, z = p
     r_tilde = r - g - 0 # (C.59, and g_w = 0 at steady state)
     ρ_tilde = r_tilde - (σ - 1)*(μ - g + (σ-1)*(υ^2/2)) # (C.41)
