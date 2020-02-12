@@ -114,7 +114,7 @@ function stationary_algebraic_given_g(g, parameters, settings)
     converged(sol) || error("Solver didn't converge.")
     z_hat, Ω = sol.zero
     @assert z_hat > 1 && Ω > 0
-    staticvalues = staticvals([g, z_hat, Ω], parameters) # uses undistorted parameters (except x)
+    staticvalues = staticvals([g, z_hat, Ω], parameters) 
     return merge(staticvalues, merge((g = g, z_hat = z_hat, Ω = Ω,), welfare([g, z_hat, Ω], parameters))) # calculate quantities and return
 end
 
@@ -156,7 +156,7 @@ end
 
 # Kernel for the algebraic stationary.
 function stationary_algebraic_aux(vals, parameters)
-    @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, υ, μ, δ, ζ_p, χ_p = parameters
+    @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, υ, μ, δ, χ, ζ = parameters
     @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, x, π_min = staticvals(vals, parameters)
     g, z_hat, Ω = vals
 
@@ -164,15 +164,15 @@ function stationary_algebraic_aux(vals, parameters)
     denom_1 = a*(g - r) # (C.19)
     num_1 = ν*(N-1)*(θ - σ + 1)*(d^(1 - σ)*(θ + ν)*z_hat^(-θ + σ - 1)-b*θ*z_hat^(-θ-ν)) # (C.19)
     num_2 = θ*(ν*(N-1)*d^(1-σ)*(θ+ν)*z_hat^(-θ + σ -1) + (ν + σ - 1)*(θ + ν - σ + 1)) # (C.19)
-    return [x/π_min - a*(χ_p/(1-χ_p))*(σ + ν - 1)/ν, # (C.18)
-            1 + (σ-1)/ν - (num_1/denom_1 + num_2)/big_denom + (χ_p/(1-χ_p))*(σ + ν - 1)/(ν), # (C.19)
+    return [x/π_min - a*(χ/(1-χ))*(σ + ν - 1)/ν, # (C.18)
+            1 + (σ-1)/ν - (num_1/denom_1 + num_2)/big_denom + (χ/(1-χ))*(σ + ν - 1)/(ν), # (C.19)
             π_min - (1- L_tilde)/((σ -1)*z_bar^(σ-1))] # (C.20)
 end
 
 function staticvals(vals, parameters)
     g, z_hat, Ω = vals
     @assert parameters.η ≈ 0  # we think that the L_tilde formulas are wrong for η != 0
-    @unpack ρ, σ, N, θ, γ, d, κ, ζ, ζ_p, η, Theta, χ, χ_p, υ, μ, δ = parameters
+    @unpack ρ, σ, N, θ, γ, d, κ, ζ, η, Theta, χ, υ, μ, δ = parameters
 
     F(z) = 1 - z^(-θ) # (C.1)
     r = ρ + γ*g + δ # (C.6)
@@ -198,7 +198,7 @@ end
 function stationary_numerical_given_vals(vals, p, parameters, settings)
     g, z_hat, Ω = vals
     @unpack F, r, ν, a, b, S, L_tilde, z_bar, w, π_min = staticvals([g, z_hat, Ω], parameters)
-    @unpack ρ, σ, N, θ, γ, d, κ, ζ_p, η, Theta, χ_p, υ, μ, δ = parameters
+    @unpack ρ, σ, N, θ, γ, d, κ, η, Theta, ζ, χ, υ, μ, δ = parameters
     @unpack Ξ₁, L_1_minus, L_2, ω, z = p
     r_tilde = r - g - 0 # (C.59, and g_w = 0 at steady state)
     ρ_tilde = r_tilde - (σ - 1)*(μ - g + (σ-1)*(υ^2/2)) # (C.41)
@@ -208,8 +208,8 @@ function stationary_numerical_given_vals(vals, p, parameters, settings)
     v_tilde = A_T \ π.(z) # discretized system of ODE for v, where v'(T) = 0 (53)
 
     # System of equations, given the numerically solved ODE
-    return (residuals = [Ξ₁*v_tilde[1] - dot(v_tilde, ω) + ζ_p, # (54)
-            Ξ₁*v_tilde[1] - ζ_p*(1-χ_p)/χ_p, # (56)
+    return (residuals = [Ξ₁*v_tilde[1] - dot(v_tilde, ω) + ζ, # (54)
+            Ξ₁*v_tilde[1] - ζ*(1-χ)/χ, # (56)
             π_min - (1 - L_tilde)/((σ-1)*z_bar^(σ-1))], # (38), from the static equilibrium
             v_tilde = v_tilde)
 end
